@@ -26,7 +26,6 @@ def get_model(version=None, checkpoint_path=None, model_name="yolov8m") -> YOLO:
 def cleanup():
     """
     Releases memory and collect garbage
-    :return:
     """
     gc.collect()
     torch.cuda.empty_cache()
@@ -35,8 +34,8 @@ def cleanup():
 def get_labels(path: str) -> List[str]:
     """
     Gets list of labels from txt file
-    :param path: path to file with labels
-    :return: list of labels
+    :param path: Path to file with labels
+    :return: List of labels
     """
     with open(path) as f:
         labels = list(map(lambda x: x.strip(), f.readlines()))

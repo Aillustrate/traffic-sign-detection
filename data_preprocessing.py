@@ -13,11 +13,11 @@ from project_utils import get_labels
 
 class DataPreprocessor:
     def __init__(
-        self,
-        source_dir: str,
-        images_dir: str,
-        labels_fname: str = "labels.txt",
-        data_path: str = "trafic_signs.yaml",
+            self,
+            source_dir: str,
+            images_dir: str,
+            labels_fname: str = "labels.txt",
+            data_path: str = "trafic_signs.yaml",
     ):
         """
 
@@ -53,7 +53,7 @@ class DataPreprocessor:
         """
         Converts labels to YOLO format
         :param train: Whether the split is train (otherwise val)
-        :return:labels of train/validation images
+        :return: Labels of train/validation images
         """
         split = "train" if train else "val"
         target_dir = os.path.join("datasets", f"{split}_annotation")
@@ -68,7 +68,7 @@ class DataPreprocessor:
             os.makedirs(os.path.join(target_dir, folder), exist_ok=True)
         convert_coco_json(target_dir)
         for fname in tqdm(
-            os.listdir(os.path.join(self.__TEMP_DIR, "labels", temp_labels_dir))
+                os.listdir(os.path.join(self.__TEMP_DIR, "labels", temp_labels_dir))
         ):
             move(
                 os.path.join(self.__TEMP_DIR, "labels", temp_labels_dir, fname),
@@ -83,7 +83,7 @@ class DataPreprocessor:
         return labels
 
     def __split_images(
-        self, train_labels: Set[str], val_labels: Set[str]
+            self, train_labels: Set[str], val_labels: Set[str]
     ) -> Tuple[int, int]:
         """
         Splits images into train and validation
@@ -111,8 +111,8 @@ class DataPreprocessor:
 
     def prepare_data(self) -> List[Dict[str, Any]]:
         """
-        Create data dict to save into yaml file
-        :return:
+        Creates data dict to save into yaml file
+        :return: data dict to save into yaml file
         """
         labels = get_labels(self.labels_path)
         data = [
@@ -130,8 +130,5 @@ class DataPreprocessor:
         Creates the data dict and saves it into the yaml file, which will be used by YOLO
         """
         data = self.prepare_data()
-        with open(
-            self.data_path,
-            "w+",
-        ) as f:
+        with open(self.data_path, "w+") as f:
             yaml.dump_all(data, f, sort_keys=False)

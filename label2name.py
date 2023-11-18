@@ -11,10 +11,10 @@ from project_utils import get_labels
 
 class Mapper:
     def __init__(
-        self,
-        labels_path,
-        table_path: str = "traffic_signs.csv",
-        dict_path: str = "mapping.json",
+            self,
+            labels_path,
+            table_path: str = "traffic_signs.csv",
+            dict_path: str = "mapping.json",
     ):
         """
 
@@ -29,18 +29,18 @@ class Mapper:
         self.mapping = {}
 
     def create(
-        self,
-        signs: pd.DataFrame = None,
-        url: str = "",
-        save_table: bool = True,
-        save_dict: bool = True,
+            self,
+            signs: pd.DataFrame = None,
+            url: str = "",
+            save_table: bool = True,
+            save_dict: bool = True,
     ):
         """
         Creates the mapping from sign label to sign name
-        :param signs: pandas dataframe containing traffic sign codes (e.g. 1.2, 5.2.1 etc) and their names, if it already exists
+        :param signs: Pandas dataframe containing traffic sign codes (e.g. 1.2, 5.2.1 etc) and their names, if it already exists
         :param url: URL of the webpage to parse in case the `signs` dataframe is not provided
-        :param save_table: wheather to save the parsed table
-        :param save_dict: wheather to save the final mapping dict
+        :param save_table: Whether to save the parsed table
+        :param save_dict: Whether to save the final mapping dict
         """
         if signs:
             self.signs = signs
@@ -54,17 +54,17 @@ class Mapper:
             print(f"Mapping saved to {self.dict_path}")
 
     def parse_table(
-        self,
-        url: str,
-        columns: List[str] = ["id", "name", "comment"],
-        save: bool = True,
+            self,
+            url: str,
+            columns: List[str] = ["id", "name", "comment"],
+            save: bool = True,
     ) -> pd.DataFrame:
         """
         Parses a table containing info about sign codes (e.g. 1.2, 5.2.1 etc) and their names
         :param url: URL of the webpage to parse
-        :param columns: column names
-        :param save: wheather to save the parsed table
-        :return: dataframe containing info about sign codes (e.g. 1.2, 5.2.1 etc) and their names
+        :param columns: Column names
+        :param save: Whether to save the parsed table
+        :return: Dataframe containing info about sign codes (e.g. 1.2, 5.2.1 etc) and their names
         """
         data = []
         r = requests.get(url)
@@ -88,8 +88,8 @@ class Mapper:
     def get_name(self, code: str) -> str:
         """
         Gets a sign name by its code. Sometimes returns empty string or 'nan'
-        :param code: sign code with do.ts (e.g. 1.2, 5.2.1 etc)
-        :return: sign name
+        :param code: Sign code with do.ts (e.g. 1.2, 5.2.1 etc)
+        :return: Sign name
         """
         row = self.signs["name"].loc[self.signs.index == code].values
         if row.any():
@@ -99,8 +99,8 @@ class Mapper:
     def get_name_by_label(self, label: str) -> str:
         """
         Gets a sign name by its label. Sometimes returns empty string or 'nan'
-        :param label: label with under_scores (e.g. 1_2, 5_2_1 etc)
-        :return: sign name or empty string
+        :param label: Label with under_scores (e.g. 1_2, 5_2_1 etc)
+        :return: Sign name or empty string
         """
         full_label = label.replace("_", ".")
         name = self.get_name(full_label)
@@ -117,8 +117,8 @@ class Mapper:
     def get_mapping(self, labels: List[str]) -> Dict[str, str]:
         """
         Get a mapping from labels to traffic sign names
-        :param labels: list of labels with under_scores (e.g. 1_2, 5_2_1 etc)
-        :return: dict with labels as keys and sign names as values
+        :param labels: List of labels with under_scores (e.g. 1_2, 5_2_1 etc)
+        :return: Dict with labels as keys and sign names as values
         """
         mapping = []
         for label in labels:
@@ -135,10 +135,10 @@ class Mapper:
     def label2name(self, label: str) -> str:
         """
         Gets sign name by label from the final mapping
-        :param label: label with under_scores (e.g. 1_2, 5_2_1 etc)
-        :return: sign name
+        :param label: Label with under_scores (e.g. 1_2, 5_2_1 etc)
+        :return: Sign name
         """
         assert (
-            len(self.mapping) > 0
+                len(self.mapping) > 0
         ), f"Please create mapping calling the `create` method"
         return self.mapping.get(label, "")
