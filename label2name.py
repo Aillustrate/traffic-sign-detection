@@ -1,40 +1,27 @@
-import json
 import os
-from typing import Dict, List
-
-import pandas as pd
+import re
+import json
 import requests
+from typing import List
+import pandas as pd
+from ultralytics.engine.results import Boxes
 from bs4 import BeautifulSoup
 
 from project_utils import get_labels
 
-
 class Mapper:
-    def __init__(
-            self,
-            labels_path,
-            table_path: str = "traffic_signs.csv",
-            dict_path: str = "mapping.json",
-    ):
+    def __init__(self, signs: pd.DataFrame, labels_path: str, saving_path:str='mapping.json'):
         """
-
         :param labels_path: Path to the file containing labels
         :param table_path: Path where the parsed table will be saved
         :param dict_path: Path where the final mapping dict will be saved
         """
+        self.signs = signs
         self.labels_path = labels_path
-        self.table_path = table_path
-        self.dict_path = dict_path
-        self.signs = []
+        self.saving_path = saving_path
         self.mapping = {}
-
-    def create(
-            self,
-            signs: pd.DataFrame = None,
-            url: str = "",
-            save_table: bool = True,
-            save_dict: bool = True,
-    ):
+    
+    def create(self, save:bool=True):
         """
         Creates the mapping from sign label to sign name
         :param signs: Pandas dataframe containing traffic sign codes (e.g. 1.2, 5.2.1 etc) and their names, if it already exists
@@ -42,79 +29,43 @@ class Mapper:
         :param save_table: Whether to save the parsed table
         :param save_dict: Whether to save the final mapping dict
         """
-        if signs:
-            self.signs = signs
-        else:
-            self.signs = self.parse_table(url, save=save_table)
         labels = get_labels(self.labels_path)
         self.mapping = self.get_mapping(labels)
-        if save_dict:
-            with open(self.dict_path, "w") as jf:
-                json.dump(self.mapping, jf, ensure_ascii=False)
-            print(f"Mapping saved to {self.dict_path}")
-
-    def parse_table(
-            self,
-            url: str,
-            columns: List[str] = ["id", "name", "comment"],
-            save: bool = True,
-    ) -> pd.DataFrame:
-        """
-        Parses a table containing info about sign codes (e.g. 1.2, 5.2.1 etc) and their names
-        :param url: URL of the webpage to parse
-        :param columns: Column names
-        :param save: Whether to save the parsed table
-        :return: Dataframe containing info about sign codes (e.g. 1.2, 5.2.1 etc) and their names
-        """
-        data = []
-        r = requests.get(url)
-        soup = BeautifulSoup(r.text)
-        tables = soup.find_all("table", class_="wikitable")
-        for table in tables:
-            table_body = table.find("tbody")
-            rows = table_body.find_all("tr")
-            for row in rows:
-                cols = row.find_all("td")
-                cols = [ele.text.strip() for ele in cols]
-                if cols:
-                    data.append([ele for ele in cols if ele])
-        df = pd.DataFrame(data, columns=columns)
-        df = df.set_index("id")
         if save:
-            df.to_csv(self.table_path)
-            print(f"Parsed table saved to {self.table_path}")
-        return df
+            with open(self.saving_path, 'w') as jf:
+                json.dump(self.mapping, jf, ensure_ascii=False)
+            print(f'Mapping saved to {self.saving_path}')
 
-    def get_name(self, code: str) -> str:
+    def get_name(self, label:str):
         """
         Gets a sign name by its code. Sometimes returns empty string or 'nan'
         :param code: Sign code with do.ts (e.g. 1.2, 5.2.1 etc)
         :return: Sign name
         """
-        row = self.signs["name"].loc[self.signs.index == code].values
+        row = self.signs['name'].loc[self.signs.id == label].values
         if row.any():
             return str(row[0])
-        return ""
+        return ''
 
-    def get_name_by_label(self, label: str) -> str:
+    def get_name_by_label(self, label:str):
         """
         Gets a sign name by its label. Sometimes returns empty string or 'nan'
         :param label: Label with under_scores (e.g. 1_2, 5_2_1 etc)
         :return: Sign name or empty string
         """
-        full_label = label.replace("_", ".")
+        full_label = label.replace('_', '.')
         name = self.get_name(full_label)
         if name:
             return name
-        subclass_label = label.replace("_", ".") + "_1"
+        subclass_label = label.replace('_', '.')+'_1'
         name = self.get_name(subclass_label)
         if name:
             return name
-        hyperclass_label = ".".join(label.split("_")[:-1])
+        hyperclass_label = '.'.join(label.split('_')[:-1])
         name = self.get_name(hyperclass_label)
         return name
 
-    def get_mapping(self, labels: List[str]) -> Dict[str, str]:
+    def get_mapping(self, labels:List[str]):
         """
         Get a mapping from labels to traffic sign names
         :param labels: List of labels with under_scores (e.g. 1_2, 5_2_1 etc)
@@ -127,18 +78,28 @@ class Mapper:
         mapping = sorted(mapping, key=lambda x: x[0])
         mapping_with_filled_blanks = []
         for i, (label, name) in enumerate(mapping[1:]):
-            if name in ["", "nan"]:
-                name = mapping_with_filled_blanks[i - 1][1]
+            if name in ['', 'nan']:
+                name = mapping_with_filled_blanks[i-1][1]
             mapping_with_filled_blanks.append((label, name))
         return dict(mapping_with_filled_blanks)
-
-    def label2name(self, label: str) -> str:
+    
+    def label2name(self, label:str):
         """
         Gets sign name by label from the final mapping
         :param label: Label with under_scores (e.g. 1_2, 5_2_1 etc)
         :return: Sign name
         """
-        assert (
-                len(self.mapping) > 0
-        ), f"Please create mapping calling the `create` method"
-        return self.mapping.get(label, "")
+        assert len(self.mapping) > 0, f'Please create mapping calling the `create` method'
+        return self.mapping.get(label, '')
+    
+    def replace_names(self, result:Boxes) -> Boxes:
+        """
+        Replaces label names in the model (e.g. {0 : '2_1'} -> {0 : 'Главная дорога'})
+        :param label: yolo model
+        """
+        for key, label in result.names.items():
+            if re.match('(.*_.*)+', label):
+                code = label.replace('_', '.')
+                result.names[key] = self.label2name(label)
+        return result
+        
