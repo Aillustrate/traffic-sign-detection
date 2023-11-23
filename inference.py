@@ -13,6 +13,8 @@ def process_frame(frame, model:YOLO, mapper:Mapper, verbose:bool=False, conf:flo
     param frame: frame from a video or path to the image
     param model: the YOLO model
     param mapper: initialized mapper object, which maps labels to names
+    param verbose: verbose predictions
+    param conf: confidence threshold
     return: annotated image
     """
     results = model(frame, verbose=verbose, conf=conf)
