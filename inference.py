@@ -7,7 +7,7 @@ from label2name import Mapper
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-def process_frame(frame, model:YOLO, mapper:Mapper) -> np.ndarray:
+def process_frame(frame, model:YOLO, mapper:Mapper, verbose:bool=False, conf:float=0.5) -> np.ndarray:
     """
     Detects traffic signs on an image
     param frame: frame from a video or path to the image
@@ -15,12 +15,12 @@ def process_frame(frame, model:YOLO, mapper:Mapper) -> np.ndarray:
     param mapper: initialized mapper object, which maps labels to names
     return: annotated image
     """
-    results = model(frame, verbose=False)
+    results = model(frame, verbose=verbose, conf=conf)
     result = mapper.replace_names(results[0])
     annotated_frame = result.plot()
     return annotated_frame
 
-def process_video(video_path:str, model:YOLO, mapper:Mapper, saving_path:str=None):
+def process_video(video_path:str, model:YOLO, mapper:Mapper, saving_path:str=None, **kwargs):
     """
     Detects traffic signs on a video
     param video_path: path to the video
@@ -42,7 +42,7 @@ def process_video(video_path:str, model:YOLO, mapper:Mapper, saving_path:str=Non
         success, frame = cap.read()
         if success:
             results = model(frame)
-            annotated_frame = process_frame(frame, model, mapper)
+            annotated_frame = process_frame(frame, model, mapper, verbose=False, **kwargs)
             video_writer.write(annotated_frame)
         else:
             break
