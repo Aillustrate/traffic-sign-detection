@@ -1,9 +1,13 @@
 import gc
 import os
+import logging
 from typing import List
 
 import torch
 from ultralytics import YOLO
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def get_model(version=None, checkpoint_path=None, model_name="yolov8m") -> YOLO:
@@ -66,5 +70,5 @@ def parse_table(self, url:str, columns:List[str] =['id','name','comment'], save:
     df = df.set_index('id')
     if save:
         df.to_csv(saving_path)
-        print(f'Parsed table saved to {saving_path}')
+        logging.info(f'Parsed table saved to {saving_path}')
     return df

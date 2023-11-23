@@ -1,7 +1,11 @@
+import logging
 import numpy as np
 import cv2
 from ultralytics import YOLO
 from label2name import Mapper
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def process_frame(frame, model:YOLO, mapper:Mapper) -> np.ndarray:
     """
@@ -43,4 +47,4 @@ def process_video(video_path:str, model:YOLO, mapper:Mapper, saving_path:str=Non
         else:
             break
     cap.release()
-    print(f'Annotated video saved to {saving_path}')
+    logging.info(f'Annotated video saved to {saving_path}')

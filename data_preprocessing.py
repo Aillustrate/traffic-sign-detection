@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 from shutil import move
 from typing import Any, Dict, List, Set, Tuple
 
@@ -10,6 +11,8 @@ sys.path.append("./JSON2YOLO")
 from JSON2YOLO.general_json2yolo import convert_coco_json
 from project_utils import get_labels
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class DataPreprocessor:
     def __init__(
@@ -41,11 +44,11 @@ class DataPreprocessor:
         train_labels = self.__covert_labels(train=True)
         val_labels = self.__covert_labels(train=False)
         train_counter, val_counter = self.__split_images(train_labels, val_labels)
-        print(
+        logging.info(
             f"Data was successfully converted to YOLO format. The dataset contains {train_counter} train images and {val_counter} val images"
         )
         self.save_data()
-        print(
+        logging.info(
             f"{self.data_path} file created. Use it as `data` parameter to train the model."
         )
 

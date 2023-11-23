@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import logging
 import requests
 from typing import List
 import pandas as pd
@@ -8,6 +9,9 @@ from ultralytics.engine.results import Boxes
 from bs4 import BeautifulSoup
 
 from project_utils import get_labels
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class Mapper:
     def __init__(self, signs: pd.DataFrame, labels_path: str, saving_path:str='mapping.json'):
@@ -34,7 +38,7 @@ class Mapper:
         if save:
             with open(self.saving_path, 'w') as jf:
                 json.dump(self.mapping, jf, ensure_ascii=False)
-            print(f'Mapping saved to {self.saving_path}')
+            logging.info(f'Mapping saved to {self.saving_path}')
 
     def get_name(self, label:str):
         """
