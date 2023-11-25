@@ -20,3 +20,17 @@ We conducted experiments with 2 models: [yolo8m](https://github.com/ultralytics/
 
 ### Metrics
 To evaluate the performance of the models we decided to use 2 metrics: MAP@50 and MAP@50-95.
+
+- Mean Average Precision(mAP) is the current benchmark metric used by the computer vision research community to evaluate the robustness of object detection models.
+- mAP encapsulates the tradeoff between precision and recall and maximizes the effect of both metrics.
+- Calculating mAP over an IoU threshold range avoids the ambiguity of picking the optimal IoU threshold for evaluating the model's accuracy.
+
+### Results
+
+We trained both models for about 70 epochs. All metrics of last epohs of traing for both models are avaliable in [metrics](metrics) directory. Overall, it can be said that with about the same training time yolo8m gives metrics slightly higher than yolo5m. 
+
+
+| Model  | MAP@50 | MAP@50-95 |
+| ------ | ------ | --------- |
+| yolo8m |  0.95  |   0.74    |
+| yolo5m |  0.91  |   0.69    |
