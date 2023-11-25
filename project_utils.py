@@ -1,9 +1,10 @@
 import gc
-import os
 import logging
+import os
 from typing import List
 
 import torch
+
 from ultralytics import YOLO
 
 logger = logging.getLogger()
@@ -45,30 +46,37 @@ def get_labels(path: str) -> List[str]:
         labels = list(map(lambda x: x.strip(), f.readlines()))
     return labels
 
-def parse_table(self, url:str, columns:List[str] =['id','name','comment'], save:bool=True, saving_path:str = 'traffic_signs.csv'):
+
+def parse_table(
+    self,
+    url: str,
+    columns: List[str] = ["id", "name", "comment"],
+    save: bool = True,
+    saving_path: str = "traffic_signs.csv",
+):
     """
-        Parses a table containing info about sign codes (e.g. 1.2, 5.2.1 etc) and their names
-        :param url: URL of the webpage to parse
-        :param columns: Column names
-        :param save: Whether to save the parsed table
-        :param saving_path: Path to save the parsed table
-        :return: Dataframe containing info about sign codes (e.g. 1.2, 5.2.1 etc) and their names
-        """
+    Parses a table containing info about sign codes (e.g. 1.2, 5.2.1 etc) and their names
+    :param url: URL of the webpage to parse
+    :param columns: Column names
+    :param save: Whether to save the parsed table
+    :param saving_path: Path to save the parsed table
+    :return: Dataframe containing info about sign codes (e.g. 1.2, 5.2.1 etc) and their names
+    """
     data = []
     r = requests.get(url)
     soup = BeautifulSoup(r.text)
-    tables = soup.find_all('table', class_='wikitable')
+    tables = soup.find_all("table", class_="wikitable")
     for table in tables:
-        table_body = table.find('tbody')
-        rows = table_body.find_all('tr')
+        table_body = table.find("tbody")
+        rows = table_body.find_all("tr")
         for row in rows:
-            cols = row.find_all('td')
+            cols = row.find_all("td")
             cols = [ele.text.strip() for ele in cols]
             if cols:
-                data.append([ele for ele in cols if ele]) 
+                data.append([ele for ele in cols if ele])
     df = pd.DataFrame(data, columns=columns)
-    df = df.set_index('id')
+    df = df.set_index("id")
     if save:
         df.to_csv(saving_path)
-        logging.info(f'Parsed table saved to {saving_path}')
+        logging.info(f"Parsed table saved to {saving_path}")
     return df

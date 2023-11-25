@@ -1,6 +1,6 @@
+import logging
 import os
 import sys
-import logging
 from shutil import move
 from typing import Any, Dict, List, Set, Tuple
 
@@ -14,13 +14,14 @@ from project_utils import get_labels
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+
 class DataPreprocessor:
     def __init__(
-            self,
-            source_dir: str,
-            images_dir: str,
-            labels_fname: str = "labels.txt",
-            data_path: str = "trafic_signs.yaml",
+        self,
+        source_dir: str,
+        images_dir: str,
+        labels_fname: str = "labels.txt",
+        data_path: str = "trafic_signs.yaml",
     ):
         """
 
@@ -71,7 +72,7 @@ class DataPreprocessor:
             os.makedirs(os.path.join(target_dir, folder), exist_ok=True)
         convert_coco_json(target_dir)
         for fname in tqdm(
-                os.listdir(os.path.join(self.__TEMP_DIR, "labels", temp_labels_dir))
+            os.listdir(os.path.join(self.__TEMP_DIR, "labels", temp_labels_dir))
         ):
             move(
                 os.path.join(self.__TEMP_DIR, "labels", temp_labels_dir, fname),
@@ -86,7 +87,7 @@ class DataPreprocessor:
         return labels
 
     def __split_images(
-            self, train_labels: Set[str], val_labels: Set[str]
+        self, train_labels: Set[str], val_labels: Set[str]
     ) -> Tuple[int, int]:
         """
         Splits images into train and validation
