@@ -27,7 +27,7 @@ To evaluate the performance of the models we decided to use 2 metrics: MAP@50 an
 
 ### Results
 
-We trained both models for about 70 epochs. All metrics of last epohs of traing for both models are avaliable in [metrics](metrics) directory. Overall, it can be said that with about the same training time yolo8m gives metrics slightly higher than yolo5m. 
+We trained both models for about 70 epochs. All metrics of last epohs of traing for both models are avaliable in [metrics](metrics) directory. Overall, it can be said that with about the same training time yolo8m gives metrics slightly higher than yolo5m. Code for training and evaluation of the models is avaliable in notebook [experiments.ipynb](experiments.ipynb).
 
 
 | Model  | MAP@50 | MAP@50-95 |
