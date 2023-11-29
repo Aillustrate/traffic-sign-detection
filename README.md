@@ -8,7 +8,7 @@ Please visit the branch [⚙️ service ⚙️](https://github.com/Aillustrate/t
 
 **Example of the resulting video**
 
-![gif](example_video.gif)
+![gif](demo/example_video.gif)
 
 ## Experiments
 
