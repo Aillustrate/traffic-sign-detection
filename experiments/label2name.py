@@ -1,15 +1,11 @@
 import json
 import logging
-import os
 import re
 from typing import List
 
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
-
-from project_utils import get_labels
 from ultralytics.engine.results import Boxes
+from utils.project_utils import get_labels
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

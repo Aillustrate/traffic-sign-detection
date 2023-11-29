@@ -1,8 +1,6 @@
 import logging
-
 import cv2
 import numpy as np
-
 from label2name import Mapper
 from ultralytics import YOLO
 
@@ -13,8 +11,10 @@ logger.setLevel(logging.INFO)
 class Detector:
     def __init__(self, model: YOLO, mapper: Mapper):
         """
-        param model: the YOLO model
-        param mapper: initialized mapper object, which maps labels to names
+        Initialize the Detector.
+
+        :param model: The YOLO model
+        :param mapper: Initialized mapper object, which maps labels to names
         """
         self.model = model
         self.mapper = mapper
@@ -23,11 +23,12 @@ class Detector:
         self, frame, verbose: bool = False, conf: float = 0.5
     ) -> np.ndarray:
         """
-        Detects traffic signs on an image
-        param frame: frame from a video or path to the image
-        param verbose: verbose predictions
-        param conf: confidence threshold
-        return: annotated image
+        Detects traffic signs on an image.
+
+        :param frame: Frame from a video or path to the image
+        :param verbose: Verbose predictions
+        :param conf: Confidence threshold
+        :return: Annotated image
         """
         results = self.model(frame, verbose=verbose, conf=conf)
         result = self.mapper.replace_names(results[0])
@@ -36,9 +37,10 @@ class Detector:
 
     def process_video(self, video_path: str, saving_path: str = None, **kwargs):
         """
-        Detects traffic signs on a video
-        param video_path: path to the video
-        param saving_path: path where the annotated video will be saved
+        Detects traffic signs on a video.
+
+        :param video_path: Path to the video
+        :param saving_path: Path where the annotated video will be saved
         """
         if not saving_path:
             name, extension = video_path.split(".")
