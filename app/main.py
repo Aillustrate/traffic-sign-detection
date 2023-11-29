@@ -10,7 +10,9 @@ MODEL_NAME = "yolov8m"
 model = get_model(version="", model_name=MODEL_NAME)
 
 signs = pd.read_csv("components/traffic_signs.csv")
-mapper = Mapper(signs, labels_path="components/labels.txt", saving_path="components/mapping.json")
+mapper = Mapper(
+    signs, labels_path="components/labels.txt", saving_path="components/mapping.json"
+)
 mapper.create()
 
 detector = Detector(model=model, mapper=mapper)
@@ -21,10 +23,7 @@ def video_identity(video, progress=gr.Progress()):
     new_file_name = "processed_" + file_name
     new_file_path = os.path.join(dir_name, new_file_name)
     detector.process_video(
-        video_path=video, 
-        saving_path=new_file_path, 
-        conf=0.6, 
-        progress=progress
+        video_path=video, saving_path=new_file_path, conf=0.6, progress=progress
     )
     return new_file_path
 
@@ -33,11 +32,9 @@ demo = gr.Interface(
     video_identity,
     gr.Video(),
     "playable_video",
-    examples=[
-        os.path.join(os.path.dirname(__file__), "examples/test_video.mp4")
-    ],
-    cache_examples=True
+    examples=[os.path.join(os.path.dirname(__file__), "examples/test_video.mp4")],
+    cache_examples=True,
 )
 
 if __name__ == "__main__":
-    demo.queue().launch(server_name='0.0.0.0')
+    demo.queue().launch(server_name="0.0.0.0")

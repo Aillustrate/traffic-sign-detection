@@ -43,4 +43,3 @@ def get_labels(path: str) -> List[str]:
     with open(path) as f:
         labels = list(map(lambda x: x.strip(), f.readlines()))
     return labels
-

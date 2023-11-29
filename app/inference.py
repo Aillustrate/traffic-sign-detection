@@ -34,7 +34,9 @@ class Detector:
         annotated_frame = result.plot()
         return annotated_frame
 
-    def process_video(self, progress:Progress, video_path: str, saving_path: str = None, **kwargs):
+    def process_video(
+        self, progress: Progress, video_path: str, saving_path: str = None, **kwargs
+    ):
         """
         Detects traffic signs on a video
         param video_path: path to the video
@@ -51,7 +53,7 @@ class Detector:
         video_writer = cv2.VideoWriter(
             saving_path, fourcc, 30, (frame_width, frame_height)
         )
-        
+
         pbar = progress.tqdm(range(frame_num))
         while cap.isOpened():
             success, frame = cap.read()
