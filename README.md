@@ -4,7 +4,7 @@
 
 A prototype of an assistant for drivers that will notify them of road signs. The assistant can recognize road signs in various lighting and weather conditions, informing the driver about speed limits, prohibitions, warnings and other important instructions on the road in accordance with Russian traffic rules. Currently it works with dash cam videos.
 
-Please visit the branch (⚙️ service ⚙️)[https://github.com/Aillustrate/traffic-sign-detection/tree/service] to get acquainted with all the technical details such as instructions for deployment, scaling, and performance evaluations
+Please visit the branch [⚙️ service ⚙️](https://github.com/Aillustrate/traffic-sign-detection/tree/service) to get acquainted with all the technical details such as instructions for deployment, scaling, and performance evaluations
 
 **Example of the resulting video**
 
